@@ -75,15 +75,23 @@ spec:
       labels:
         app: rails
     spec:
+      volumes:
+      - name: app-volume
+        hostPath:
+            path: /Users/takeohiroaki/app/rails
+            type: Directory
       containers:
-        - name: rails
-          image: rails
-          command:
-            - tail
-            - -f
-            - /dev/null
-          ports:
-          - containerPort: 8080
+      - name: rails
+        image: rails
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: app-volume
+          mountPath: /app
+        command:
+          - tail
+          - -f
+          - /dev/null
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
