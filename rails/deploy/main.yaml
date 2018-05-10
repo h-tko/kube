@@ -113,7 +113,10 @@ spec:
         name: mysql
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: password
+          valueFrom:
+            secretKeyRef:
+              name: dbsecret
+              key: password
         ports:
         - containerPort: 3306
           name: mysql
@@ -123,20 +126,17 @@ spec:
       volumes:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
-          claimName: mysql-hostpath-pv
+          claimName: mysql-pv-claim
 
 ---
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
-  name: mysql-hostpath-pv
-  labels:
-    type: locale
+  name: mysql-pv-claim
 spec:
-  capacity:
-    storage: 5Gi
   accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: /data/mysql
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
